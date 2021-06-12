@@ -7,17 +7,17 @@ class UserProfileManager(BaseUserManager):
     """
     Manager for User Class
     """
-    def create_user(self, name, email, password = None):
+    def create_user(self, email, name, password=None):
         """
         Create a new user profile
         """
         if not email:
             raise ValueError('A User must have an Email Address')
 
-        email = self.normalize_email(email)
-        user = self.model(email = email, name = name)
+        email=self.normalize_email(email)
+        user=self.model(email=email, name=name)
         user.set_password(password)
-        user.save(using = self._tictactoe)
+        user.save(using=self._db)
 
         return user
 
@@ -25,10 +25,10 @@ class UserProfileManager(BaseUserManager):
         """
         Creating a superuser
         """
-        user = self.create_user(email, name, password)
-        user.is_superuser = True
-        user.is_staff = True
-        user.save(using = self._tictactoe)
+        user=self.create_user(email, name, password)
+        user.is_superuser=True
+        user.is_staff=True
+        user.save(using=self._db)
 
         return user
 
@@ -37,15 +37,15 @@ class UserProfile(AbstractBaseUser, PermissionsMixin):
     Database model contains data specific to the User
     """
 
-    email = models.EmailField(max_length = 255, unique = True)
-    name = models.CharField(max_length = 255)
-    is_active = models.BooleanField(default = True)
-    is_staff = models.BooleanField(default = False)
+    email=models.EmailField(max_length=255, unique=True)
+    name=models.CharField(max_length=255)
+    is_active=models.BooleanField(default=True)
+    is_staff=models.BooleanField(default=False)
 
-    objects = UserProfileManager()
+    objects=UserProfileManager()
 
-    USERNAME_FIELD =  'email'
-    REQUIRED_FIELDS = ['name']
+    USERNAME_FIELD= 'email'
+    REQUIRED_FIELDS=['name']
 
     def get_full_name(self):
         return self.name
